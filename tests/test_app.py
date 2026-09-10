@@ -3,10 +3,10 @@ import os
 import pytest
 
 # Agregar la carpeta raíz para importar módulos de 'main'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'main')))
 
-from main.app import app
-from main.models import db, User
+from app import app
+from models.models import db, User
 
 @pytest.fixture
 def client():
