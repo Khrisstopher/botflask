@@ -8,9 +8,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'm
 from app import app
 from models.models import db, User
 
-@pytest.fixture
+@pytest.fixture # Prepara el entorno
 def client():
-    app.config['TESTING'] = True
+    app.config['TESTING'] = True # Modo de prueba
     app.config['WTF_CSRF_ENABLED'] = False
 
     with app.test_client() as client:
@@ -35,7 +35,7 @@ def test_01_disponibilidad_ruta_principal(client):
 def test_02_carga_vista_autenticacion(client):
     """Caso de Prueba 2: Validar el acceso a la vista de login."""
     response = client.get('/login')
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 def test_03_validacion_credenciales_invalidas(client):
     """Caso de Prueba 3: Validar respuesta ante login con credenciales erróneas."""

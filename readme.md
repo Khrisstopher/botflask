@@ -37,5 +37,14 @@ El archivo está dentro de main. Puedes modificar las credenciales.
     ```bash
     pip install -r requirements.txt
 
-#### 📞 Contacto
-📧 [Email](mailto:khriss201409@hotmail.com)
+## Autor
+
+**Cristofer Castro Arias**
+
+[WhatsApp](https://wa.me/573005352422)
+
+[YouTube](https://www.youtube.com/@KhrisstopherTube)
+
+[Email](mailto:moralesk2026@outlook.com)
+
+---
