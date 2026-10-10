@@ -35,7 +35,7 @@ def test_01_disponibilidad_ruta_principal(client):
 def test_02_carga_vista_autenticacion(client):
     """Caso de Prueba 2: Validar el acceso a la vista de login."""
     response = client.get('/login')
-    assert response.status_code == 404
+    assert response.status_code == 200
 
 def test_03_validacion_credenciales_invalidas(client):
     """Caso de Prueba 3: Validar respuesta ante login con credenciales erróneas."""

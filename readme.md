@@ -23,7 +23,7 @@ entonces debes ejecutar en la consola del entorno virtual, si lo creaste, el sig
 El archivo está dentro de main. Puedes modificar las credenciales.
 
 #### Tecnologías utilizadas
-- **Backend:** Python 3.13, Flask
+- **Backend:** Python 3.14.6, Flask
 - **Frontend:** HTML, CSS, JS, Bootstrap, jQuery
 - **Entorno de desarrollo:** Visual Studio Code, entornos virtuales
 

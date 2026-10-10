@@ -12,7 +12,6 @@ def get_local_now():
     return datetime.now(colombia_tz).replace(microsecond=0)
 
 # Para la mensajería entre usuarios
-# Para la mensajería entre usuarios
 class Mensaje(db.Model):
     __tablename__ = 'mensaje'
     id = db.Column(db.Integer, primary_key=True)

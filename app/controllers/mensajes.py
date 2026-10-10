@@ -18,7 +18,10 @@ def register_socket_events(socketio):
 
     @socketio.on('disconnect')
     def handle_disconnect():
-        print(f"❌ Usuario {current_user.id} desconectado")
+        if current_user.is_authenticated:
+            print(f"❌ Usuario {current_user.id} desconectado")
+        else:
+            print("❌ Usuario no autenticado desconectado")
 
     @socketio.on('join_chat')
     def join_chat(data):
@@ -37,6 +40,8 @@ def register_socket_events(socketio):
         if not destinatario_id or not message:
             return
 
+        destinatario_id = int(destinatario_id)
+
         # Guardar en la base de datos
         new_message = Mensaje(remitente_id=current_user.id, destinatario_id=destinatario_id, contenido=message)
         db.session.add(new_message)
@@ -51,7 +56,7 @@ def register_socket_events(socketio):
         socketio.emit('receive_message', {
             'remitente_id': current_user.id,
             'message': message
-        }, room=room)
+        }, to=room)
 
         print(f"✅ Mensaje enviado de {current_user.id} a {destinatario_id}: {message}")
 

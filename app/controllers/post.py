@@ -20,6 +20,7 @@ def feed():
     posts = Post.query.order_by(Post.fecha_creacion.desc()).all()
     return render_template("post/feed.html", posts=posts)
 
+@login_required
 def reaction(post_id):
     tipo = request.json.get("tipo")
 

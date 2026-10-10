@@ -9,5 +9,14 @@ venv/
 # Ignorar la base de datos SQLite
 *.db
 
-# Ignorar migraciones de Flask-Migrate
-migrations/
+# Archivos de las pruebas unitarias
+.pytest_cahche/
+
+# Instancia
+instance/
+
+# env
+.env
+
+# VScode
+.vscode/

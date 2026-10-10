@@ -2,7 +2,7 @@ import os
 import sys
 
 # Agregar la carpeta actual al path para evitar errores de importación
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, BASE_DIR)
 
 from config import Config
@@ -14,14 +14,6 @@ from controllers.mensajes import register_socket_events
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
-# 1. Asegurar la existencia de la carpeta 'instance' en la carpeta 'main'
-INSTANCE_DIR = os.path.join(BASE_DIR, 'instance')
-os.makedirs(INSTANCE_DIR, exist_ok=True)
-
-# 2. Forzar la ruta absoluta de SQLite para evitar el error de ruta relativa
-DB_FILE_PATH = os.path.join(INSTANCE_DIR, 'botflask.db')
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_FILE_PATH}"
 
 # Inicializa las extensiones con la app
 db.init_app(app)
