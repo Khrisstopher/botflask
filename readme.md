@@ -2,25 +2,20 @@
 Este repositorio contiene un proyecto personal (**en desarrollo**) en Python con Flask.
 
 #### Objetivos principales
-- Crear mi propio sitio web y simular un sistema de registro e interacción de usuarios con bots.
-- Usar bases de datos locales para almacenar y gestionar cuentas ficticias.
-- Automatizar interacciones en un entorno que controlas al 100%.
 
 ### 📂 Estructura del repositorio
 #### botflask
-- main/ → Carpeta que contiene todo el código del proyecto.
-- main/app.py → Archivo principal del proyecto.
-- .gitignore → Archivo para omitir la sincronización de archivos innecesarios en el repositorio remoto.
-- requirements.txt
+- app/ → Carpeta que contiene todo el código del proyecto.
+- test/ → Carpeta con código para pruebas.
+- wsgi.py → Archivo principal del proyecto.
+- requirements.txt → Dependencias.
+- requeriments-dev.txt → Dependencias para pruebas.
 
 ### Crear usuario administrador
-Decidí no implementar una interfaz gráfica para crear un usuario administrador.
-Si deseas crear uno, (recomendado para ver toda la funcionalidad de la app),
-entonces debes ejecutar en la consola del entorno virtual, si lo creaste, el siguiente comando:
+Debes ejecutar en la consola del entorno virtual el siguiente comando:
 1. Crea un user admin:
     ```bash
-    python main/crear_admin.py
-El archivo está dentro de main. Puedes modificar las credenciales.
+    python -m flask --app wsgi.py crear-admin
 
 #### Tecnologías utilizadas
 - **Backend:** Python 3.14.6, Flask
@@ -30,7 +25,7 @@ El archivo está dentro de main. Puedes modificar las credenciales.
 #### Cómo ejecutar el proyecto
 1. Clona el repositorio:  
    ```bash
-   git clone https://github.com/khriss201409/botflask.git
+   git clone https://github.com/khrisstopher/botflask.git
 
 #### Instalar librerías utilizadas
 1. Cualquier persona que clone el repositorio necesita ejecutar para el proyecto:

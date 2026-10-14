@@ -27,4 +27,7 @@ def create_app(config_class=Config):
     with app.app_context():
         db.create_all()
 
+    from .crear_admin import crear_admin
+    app.cli.add_command(crear_admin)
+
     return app

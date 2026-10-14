@@ -1,38 +1,52 @@
-from . import create_app
-from .extensions import socketio
+import os
+
+import click
+
 from .models import db, User
 
 
-def crear_administrador(app_instance=None):
-    if app_instance is None:
-        app_instance = create_app()
+@click.command("crear-admin")
+def crear_admin():
+    """Crea un usuario administrador de forma interactiva o mediante variables de entorno."""
 
-    with app_instance.app_context():
-        admin = User.query.filter_by(username="Rudeus").first()
+    username = os.getenv("ADMIN_USERNAME") or click.prompt(
+        "Nombre de usuario",
+        default="admin",
+    )
+    email = os.getenv("ADMIN_EMAIL") or click.prompt(
+        "Correo del administrador",
+    )
 
-        if admin:
-            print("⚠️ El usuario administrador ya existe.")
-            return
-
-        # Evita duplicar un correo que ya esté registrado.
-        usuario_email = User.query.filter_by(email="rudy@gmail.com").first()
-
-        if usuario_email:
-            print("⚠️ El correo rudy@gmail.com ya está registrado con otro usuario.")
-            return
-
-        admin = User(
-            username="Rudeus",
-            email="rudy@gmail.com",
-            role="admin"
+    password = os.getenv("ADMIN_PASSWORD")
+    if not password:
+        password = click.prompt(
+            "Contraseña",
+            hide_input=True,
+            confirmation_prompt=True,
         )
-        admin.set_password("password")
 
-        db.session.add(admin)
-        db.session.commit()
+    # Validar la regla mínima de contraseña.
+    if not any(char.isupper() for char in password) or not any(
+        char.isdigit() for char in password
+    ):
+        raise click.ClickException(
+            "La contraseña debe contener al menos una mayúscula y un número."
+        )
 
-        print("✅ Usuario administrador creado con éxito.")
+    if User.query.filter_by(username=username).first():
+        raise click.ClickException("Ese nombre de usuario ya existe.")
 
+    if User.query.filter_by(email=email).first():
+        raise click.ClickException("Ese correo ya está registrado.")
 
-if __name__ == "__main__":
-    crear_administrador()
+    admin = User(
+        username=username,
+        email=email,
+        role="admin",
+    )
+    admin.set_password(password)
+
+    db.session.add(admin)
+    db.session.commit()
+
+    click.echo(f"Administrador '{username}' creado correctamente.")
