@@ -22,10 +22,54 @@ def test_03_validacion_credenciales_invalidas(client):
     )
     assert response.status_code in [200, 400]
 
-from app.models import db
+from app.models import db, User
 
 def test_usa_base_de_datos_temporal(app):
     assert app.config["SQLALCHEMY_DATABASE_URI"] == "sqlite:///:memory:"
 
     with app.app_context():
         assert db.engine.url.database == ":memory:"
+
+def test_registro_rechaza_contraseña_invalida(client, app):
+    """No debe registrar usuarios con contraseñas inválidas."""
+    response = client.post(
+        "/register",
+        data={
+            "username": "usuario_invalido",
+            "email": "invalido@test.com",
+            "password": "Ab1",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        usuario = User.query.filter_by(
+            email="invalido@test.com"
+        ).first()
+        assert usuario is None
+
+
+def test_registro_acepta_contraseña_valida(client, app):
+    """Debe registrar usuarios con contraseñas válidas."""
+    response = client.post(
+        "/register",
+        data={
+            "username": "usuario_valido",
+            "email": "valido@test.com",
+            "password": "Abcdefg1",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    with app.app_context():
+        usuario = User.query.filter_by(
+            email="valido@test.com"
+        ).first()
+
+        assert usuario is not None
+        assert usuario.username == "usuario_valido"
+        assert usuario.check_password("Abcdefg1")

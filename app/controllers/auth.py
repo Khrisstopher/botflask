@@ -3,11 +3,7 @@
 from flask import render_template, request, flash, redirect, url_for, session
 from flask_login import login_user, logout_user
 from ..models import db, User
-import re
-
-def validar_contraseña(password):
-    return re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$", password)
-
+from ..utils.validators import validar_contraseña
 
 def register():
     if request.method == "POST":

@@ -6,10 +6,10 @@ Este repositorio contiene un proyecto personal (**en desarrollo**) en Python con
 ### 📂 Estructura del repositorio
 #### botflask
 - app/ → Carpeta que contiene todo el código del proyecto.
-- test/ → Carpeta con código para pruebas.
+- tests/ → Carpeta con código para pruebas.
 - wsgi.py → Archivo principal del proyecto.
 - requirements.txt → Dependencias.
-- requeriments-dev.txt → Dependencias para pruebas.
+- requirements-dev.txt → Dependencias para pruebas.
 
 ### Crear usuario administrador
 Debes ejecutar en la consola del entorno virtual el siguiente comando:

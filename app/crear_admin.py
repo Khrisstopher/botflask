@@ -1,6 +1,6 @@
 import os
-
 import click
+from .utils.validators import validar_contraseña
 
 from .models import db, User
 
@@ -25,12 +25,10 @@ def crear_admin():
             confirmation_prompt=True,
         )
 
-    # Validar la regla mínima de contraseña.
-    if not any(char.isupper() for char in password) or not any(
-        char.isdigit() for char in password
-    ):
+    if not validar_contraseña(password):
         raise click.ClickException(
-            "La contraseña debe contener al menos una mayúscula y un número."
+            "La contraseña debe tener al menos 8 caracteres, "
+            "una mayúscula, una minúscula y un número."
         )
 
     if User.query.filter_by(username=username).first():
