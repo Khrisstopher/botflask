@@ -10,7 +10,7 @@ login_manager.login_view = "routes.login"  # Redirigir si no ha iniciado sesión
 login_manager.login_message = "Por favor, inicia sesión para acceder a esta página."
 login_manager.login_message_category = "warning"
 
-from models.models import User
+from ..models.models import User
 
 @login_manager.user_loader
 def load_user(user_id):

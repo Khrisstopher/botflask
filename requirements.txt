@@ -7,3 +7,4 @@ simple-websocket
 gunicorn
 psycopg2-binary
 python-dotenv
+pytz

@@ -1,10 +1,16 @@
 from flask import Blueprint
-from controllers.auth import register, login, logout
-from controllers.errors import handle_401, handle_404, favicon
-from controllers.index import index
-from controllers.mensajes import obtener_mensajes
-from controllers.post import feed, reaction
-from controllers.users import lista_usuarios, editar_usuario, eliminar_usuario, profile, api_usuarios
+from ..controllers.auth import register, login, logout
+from ..controllers.errors import handle_401, handle_404, favicon
+from ..controllers.index import index
+from ..controllers.mensajes import obtener_mensajes
+from ..controllers.post import feed, reaction
+from ..controllers.users import (
+    lista_usuarios,
+    editar_usuario,
+    eliminar_usuario,
+    profile,
+    api_usuarios
+)
 
 routes = Blueprint("routes", __name__)
 

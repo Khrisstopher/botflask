@@ -1,22 +1,29 @@
-# Ignorar archivos generados por Python
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 
-# Ignorar entornos virtuales
+# Entornos virtuales
 venv/
-*.env
+.venv/
 
-# Ignorar la base de datos SQLite
-*.db
-
-# Archivos de las pruebas unitarias
-.pytest_cahche/
-
-# Instancia
-instance/
-
-# env
+# Variables de entorno y secretos
 .env
+.env.*
+!.env.example
 
-# VScode
+# Base de datos SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Caché y resultados de pruebas
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Archivos del editor
 .vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

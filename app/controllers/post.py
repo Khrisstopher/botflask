@@ -1,6 +1,6 @@
 from flask import render_template, request, session, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from models.models import Post, db, User, Reaction
+from ..models.models import Post, db, User, Reaction
 
 
 @login_required

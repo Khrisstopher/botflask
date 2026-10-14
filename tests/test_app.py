@@ -1,30 +1,39 @@
+
 import sys
-import os
+from pathlib import Path
 import pytest
 
-# Agregar la carpeta raíz para importar módulos de 'main'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'main')))
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
 
-from app import app
-from models.models import db, User
+from app import create_app
+from app.models import db, User
 
 @pytest.fixture # Prepara el entorno
 def client():
+    app = create_app()
     app.config['TESTING'] = True # Modo de prueba
     app.config['WTF_CSRF_ENABLED'] = False
 
+    with app.app_context():
+        db.create_all()
+
+        admin = User.query.filter_by(username="Rudeus").first()
+
+        if not admin:
+            admin = User.query.filter_by(email="rudy@gmail.com").first()
+
+        if not admin:
+            admin = User(
+                username="Rudeus",
+                email="rudy@gmail.com",
+                role="admin"
+            )
+            admin.set_password("password")
+            db.session.add(admin)
+            db.session.commit()
+
     with app.test_client() as client:
-        with app.app_context():
-            # Asegura que las tablas existan
-            db.create_all()
-            
-            # Crea el admin solo si no existe
-            if not User.query.filter_by(username="Rudeus").first():
-                admin = User(username="Rudeus", email="rudy@gmail.com", role="admin")
-                admin.set_password("Hola1234")
-                db.session.add(admin)
-                db.session.commit()
-                
         yield client
 
 def test_01_disponibilidad_ruta_principal(client):
