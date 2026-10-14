@@ -27,3 +27,6 @@ htmlcov/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Instancia de Flask y base de datos local
+instance/
