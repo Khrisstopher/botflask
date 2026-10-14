@@ -14,7 +14,7 @@ def create_app(config_class=Config):
     from . import models  # Registra los modelos en SQLAlchemy
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, render_as_batch=True)
     login_manager.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
 
@@ -23,9 +23,6 @@ def create_app(config_class=Config):
 
     app.register_blueprint(routes)
     register_socket_events(socketio)
-
-    with app.app_context():
-        db.create_all()
 
     from .crear_admin import crear_admin
     app.cli.add_command(crear_admin)

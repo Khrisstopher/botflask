@@ -4,7 +4,7 @@ from flask import flash, redirect, abort, render_template, request, jsonify, ses
 from flask_login import current_user, login_required, logout_user
 from ..extensions import db
 from ..models import User
-from .auth import validar_contraseña
+from ..utils.validators import validar_contraseña
 
 # Funcion para obtener usuarios
 def obtener_usuarios(formato="html"):

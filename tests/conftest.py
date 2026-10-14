@@ -10,6 +10,7 @@ def app():
     app = create_app(TestConfig)
 
     with app.app_context():
+        db.create_all()
         admin = User(
             username="admin_test",
             email="admin@test.com",

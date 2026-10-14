@@ -1,7 +1,7 @@
 from flask_socketio import emit, join_room, leave_room, disconnect
 from flask_login import current_user
 from ..extensions import db
-from ..models.models import Mensaje
+from ..models import Mensaje
 
 def register_socket_events(socketio):
     @socketio.on('connect')

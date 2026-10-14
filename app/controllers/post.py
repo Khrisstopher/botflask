@@ -1,7 +1,7 @@
 from flask import render_template, request, session, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from ..extensions import db
-from ..models.models import Post, User, Reaction
+from ..models import Post, User, Reaction
 
 @login_required
 def feed():
