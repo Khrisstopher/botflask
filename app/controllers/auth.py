@@ -2,7 +2,8 @@
 
 from flask import render_template, request, flash, redirect, url_for, session
 from flask_login import login_user, logout_user
-from ..models import db, User
+from ..extensions import db
+from ..models import User
 from ..utils.validators import validar_contraseña
 
 def register():

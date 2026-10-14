@@ -1,5 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
+from .models import User, Mensaje, Post, Reaction
 
-db = SQLAlchemy()
-
-from .models import User
+__all__ = ["User", "Mensaje", "Post", "Reaction"]

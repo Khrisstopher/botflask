@@ -1,9 +1,9 @@
 import os
 import click
+
 from .utils.validators import validar_contraseña
-
-from .models import db, User
-
+from .extensions import db
+from .models import User
 
 @click.command("crear-admin")
 def crear_admin():

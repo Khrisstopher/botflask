@@ -1,3 +1,6 @@
+from app.extensions import db
+from app.models import User
+
 def test_01_disponibilidad_ruta_principal(client):
     """Validar que la ruta principal responda HTTP 200 o 302."""
     response = client.get("/")
@@ -9,20 +12,40 @@ def test_02_carga_vista_autenticacion(client):
     response = client.get("/login")
     assert response.status_code == 200
 
-
-def test_03_validacion_credenciales_invalidas(client):
-    """Validar respuesta ante login con credenciales erróneas."""
+def test_03_rechaza_credenciales_invalidas(client):
+    """El login debe rechazar credenciales incorrectas."""
     response = client.post(
         "/login",
         data={
-            "username": "usuario_inexistente",
-            "password": "password_falso",
+            "email": "admin@test.com",
+            "password": "ContraseñaIncorrecta123",
         },
         follow_redirects=True,
     )
-    assert response.status_code in [200, 400]
 
-from app.models import db, User
+    assert response.status_code == 200
+
+    # El usuario no debe quedar autenticado.
+    with client.session_transaction() as session:
+        assert not session.get("_user_id")
+
+
+def test_04_acepta_credenciales_validas(client):
+    """El login debe aceptar las credenciales del usuario de prueba."""
+    response = client.post(
+        "/login",
+        data={
+            "email": "admin@test.com",
+            "password": "Admin1234",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+
+    # El usuario debe quedar autenticado.
+    with client.session_transaction() as session:
+        assert session.get("_user_id")
 
 def test_usa_base_de_datos_temporal(app):
     assert app.config["SQLALCHEMY_DATABASE_URI"] == "sqlite:///:memory:"

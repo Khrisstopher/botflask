@@ -2,7 +2,8 @@
 
 from flask import flash, redirect, abort, render_template, request, jsonify, session
 from flask_login import current_user, login_required, logout_user
-from ..models import db, User
+from ..extensions import db
+from ..models import User
 from .auth import validar_contraseña
 
 # Funcion para obtener usuarios

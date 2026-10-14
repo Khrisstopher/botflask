@@ -32,6 +32,11 @@ Debes ejecutar en la consola del entorno virtual el siguiente comando:
     ```bash
     pip install -r requirements.txt
 
+#### Activar entorno virtual y ejecutar la APP
+    ```bash
+    .\venv\Scripts\Activate.ps1
+    python wsgi.py
+
 ## Autor
 
 **Cristofer Castro Arias**
