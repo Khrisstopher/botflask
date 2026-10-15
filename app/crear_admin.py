@@ -1,9 +1,12 @@
 import os
 import click
 
+from sqlalchemy.exc import OperationalError
+
 from .utils.validators import validar_contraseña
 from .extensions import db
 from .models import User
+
 
 @click.command("crear-admin")
 def crear_admin():
@@ -31,20 +34,27 @@ def crear_admin():
             "una mayúscula, una minúscula y un número."
         )
 
-    if User.query.filter_by(username=username).first():
-        raise click.ClickException("Ese nombre de usuario ya existe.")
+    try:
+        if User.query.filter_by(username=username).first():
+            raise click.ClickException("Ese nombre de usuario ya existe.")
 
-    if User.query.filter_by(email=email).first():
-        raise click.ClickException("Ese correo ya está registrado.")
+        if User.query.filter_by(email=email).first():
+            raise click.ClickException("Ese correo ya está registrado.")
 
-    admin = User(
-        username=username,
-        email=email,
-        role="admin",
-    )
-    admin.set_password(password)
+        admin = User(
+            username=username,
+            email=email,
+            role="admin",
+        )
+        admin.set_password(password)
 
-    db.session.add(admin)
-    db.session.commit()
+        db.session.add(admin)
+        db.session.commit()
+
+    except OperationalError as exc:
+        db.session.rollback()
+        raise click.ClickException(
+            "Primero ejecuta: flask --app wsgi db upgrade"
+        ) from exc
 
     click.echo(f"Administrador '{username}' creado correctamente.")
