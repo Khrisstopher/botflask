@@ -6,21 +6,6 @@
 <div class="container">
     <h2 class="text-center">Usuarios Registrados</h2>
 
-
-
-    <!-- Mostrar los mensajes flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-
     <div class="table-responsive"> 
         <table id="tablaUsuarios" class="table table-striped">
             <thead>
@@ -62,5 +47,11 @@
 </div>
 
 {% include 'partials/modal_edicion_users.html' %}
+{% endblock %}
+{% block scripts %}
+    <!-- DataTables CSS y jQuery PD: Solo los usa esta parte y por eso solo están acá -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 {% endblock %}
 {% block js %}<script src="{{ url_for('static', filename='js/users.js') }}"></script>{% endblock %}

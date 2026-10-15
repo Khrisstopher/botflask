@@ -36,7 +36,6 @@ if (chatInput) {
 
 // Escuchar mensajes entrantes
 socket.on("receive_message", function (data) {
-    console.log("📩 Mensaje recibido:", data);
     const chatMessages = document.getElementById("chat-messages");
     const mensajeElemento = document.createElement("div");
     mensajeElemento.textContent = data.message;
@@ -88,7 +87,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                console.log("Usuarios cargados:", data);
                 mostrarUsuariosEnSidebar(data);
             })
             .catch(error => console.error("Error al obtener usuarios:", error));
@@ -97,7 +95,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Función para abrir el modal de chat
 function abrirModalChat(id, username) {
-    //console.log("Abrir chat con", username);
 
     // Actualizar el título del modal
     document.getElementById("chat-username").textContent = username;

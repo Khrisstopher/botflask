@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, current_app
 from flask_login import current_user, login_required
 from flask_socketio import emit, join_room, disconnect
 
@@ -15,22 +15,19 @@ def register_socket_events(socketio):
             disconnect()
             return
 
-        print(f"✅ Usuario {current_user.id} conectado")
+        current_app.logger.info("Usuario %s conectado", current_user.id)
 
         # Unir al usuario a todas sus salas activas.
         for chat_id in obtener_chats_usuario(current_user.id):
             join_room(chat_id)
-            print(
-                f"🔵 Usuario {current_user.id} "
-                f"se unió a la sala {chat_id}"
-            )
+            current_app.logger.info("Usuario %s se unió a la sala %s", current_user.id, chat_id)
 
     @socketio.on("disconnect")
     def handle_disconnect():
         if current_user.is_authenticated:
-            print(f"❌ Usuario {current_user.id} desconectado")
+            current_app.logger.info("Usuario %s desconectado", current_user.id)
         else:
-            print("❌ Usuario no autenticado desconectado")
+            current_app.logger.info("Usuario no autenticado desconectado")
 
     @socketio.on("join_chat")
     def join_chat(data):
@@ -47,10 +44,7 @@ def register_socket_events(socketio):
                 f"{max(current_user.id, int(other_user_id))}"
             )
             join_room(room)
-            print(
-                f"🔵 Usuario {current_user.id} "
-                f"se unió a la sala {room}"
-            )
+            current_app.logger.info("Usuario %s se unió a la sala %s", current_user.id, room)
 
     @socketio.on("send_message")
     def handle_message(data):
@@ -81,14 +75,14 @@ def register_socket_events(socketio):
         db.session.add(new_message)
         db.session.commit()
 
-        print(f"📝 Mensaje guardado en la BD: {new_message.contenido}")
+        current_app.logger.info( "Mensaje guardado en la BD. Remitente: %s, destinatario: %s", current_user.id, destinatario_id)
 
         # Obtener la sala correcta.
         room = (
             f"chat_{min(current_user.id, destinatario_id)}_"
             f"{max(current_user.id, destinatario_id)}"
         )
-        print(f"📤 Intentando enviar mensaje a la sala: {room}")
+        current_app.logger.info("Intentando enviar mensaje a la sala: %s", room)
 
         # Emitir el mensaje.
         socketio.emit(
@@ -100,10 +94,7 @@ def register_socket_events(socketio):
             to=room,
         )
 
-        print(
-            f"✅ Mensaje enviado de {current_user.id} "
-            f"a {destinatario_id}: {message}"
-        )
+        current_app.logger.info("Mensaje enviado de %s a %s: %s", current_user.id, destinatario_id)
 
 
 def obtener_chats_usuario(user_id):
