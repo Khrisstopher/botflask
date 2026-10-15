@@ -8,7 +8,7 @@ migrate = Migrate()
 login_manager = LoginManager()
 socketio = SocketIO()
 
-login_manager.login_view = "routes.login"
+login_manager.login_view = "auth.login"
 login_manager.login_message = (
     "Por favor, inicia sesión para acceder a esta página."
 )

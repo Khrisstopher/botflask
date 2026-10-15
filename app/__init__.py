@@ -18,10 +18,22 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     socketio.init_app(app, cors_allowed_origins=app.config["CORS_ORIGINS"])
 
-    from .routes import routes
-    from .controllers.mensajes import register_socket_events
+    from .controllers.auth import bp as auth_bp
+    from .controllers import errors
+    from .controllers.index import bp as main_bp
+    from .controllers.post import bp as posts_bp
+    from .controllers.users import bp as users_bp
+    from .controllers.mensajes import (
+        bp as chat_bp,
+        register_socket_events,
+    )
 
-    app.register_blueprint(routes)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(posts_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(chat_bp)
+
     register_socket_events(socketio)
 
     from .crear_admin import crear_admin
