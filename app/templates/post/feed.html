@@ -38,12 +38,12 @@
 
         <!-- Contador de reacciones -->
         <div class="reaction-counts" id="reaction-counts-{{ post.id }}">
-            👍 {{ post.reacciones | selectattr('tipo', 'equalto', 'like') | list | length }}
-            ❤️ {{ post.reacciones | selectattr('tipo', 'equalto', 'love') | list | length }}
-            😂 {{ post.reacciones | selectattr('tipo', 'equalto', 'haha') | list | length }}
-            😮 {{ post.reacciones | selectattr('tipo', 'equalto', 'wow') | list | length }}
-            😢 {{ post.reacciones | selectattr('tipo', 'equalto', 'sad') | list | length }}
-            😡 {{ post.reacciones | selectattr('tipo', 'equalto', 'angry') | list | length }}
+            👍 {{ post.reaction_counts['like'] }}
+            ❤️ {{ post.reaction_counts['love'] }}
+            😂 {{ post.reaction_counts['haha'] }}
+            😮 {{ post.reaction_counts['wow'] }}
+            😢 {{ post.reaction_counts['sad'] }}
+            😡 {{ post.reaction_counts['angry'] }}
         </div>
     </div>
     {% endfor %}
