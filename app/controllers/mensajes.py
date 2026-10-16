@@ -29,22 +29,39 @@ def register_socket_events(socketio):
         else:
             current_app.logger.info("Usuario no autenticado desconectado")
 
+
     @socketio.on("join_chat")
     def join_chat(data):
-        """El usuario se une a un chat con otro usuario."""
+        """Unir al usuario autenticado a una sala de chat."""
         if not current_user.is_authenticated:
             disconnect()
             return
 
-        other_user_id = data.get("other_user_id") if data else None
+        if not isinstance(data, dict):
+            return
 
-        if other_user_id:
-            room = (
-                f"chat_{min(current_user.id, int(other_user_id))}_"
-                f"{max(current_user.id, int(other_user_id))}"
-            )
-            join_room(room)
-            current_app.logger.info("Usuario %s se unió a la sala %s", current_user.id, room)
+        try:
+            other_user_id = int(data.get("other_user_id"))
+        except (TypeError, ValueError):
+            return
+
+        # Evitar chats consigo mismo.
+        if other_user_id <= 0 or other_user_id == current_user.id:
+            return
+
+        # La sala siempre incluye al usuario autenticado.
+        room = (
+            f"chat_{min(current_user.id, other_user_id)}_"
+            f"{max(current_user.id, other_user_id)}"
+        )
+
+        join_room(room)
+        current_app.logger.info(
+            "Usuario %s se unió a la sala %s",
+            current_user.id,
+            room,
+        )
+
 
     @socketio.on("send_message")
     def handle_message(data):
@@ -52,18 +69,25 @@ def register_socket_events(socketio):
             disconnect()
             return
 
-        if not data:
-            return
-
-        destinatario_id = data.get("destinatario_id")
-        message = data.get("message")
-
-        if not destinatario_id or not message:
+        if not isinstance(data, dict):
             return
 
         try:
-            destinatario_id = int(destinatario_id)
+            destinatario_id = int(data.get("destinatario_id"))
         except (TypeError, ValueError):
+            return
+
+        message = data.get("message")
+
+        if not isinstance(message, str):
+            return
+
+        message = message.strip()
+
+        if not message or len(message) > 5000:
+            return
+
+        if destinatario_id <= 0 or destinatario_id == current_user.id:
             return
 
         # Guardar el mensaje en la base de datos.

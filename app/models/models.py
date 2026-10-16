@@ -28,8 +28,19 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=get_utc_now)
     role = db.Column(db.String(20), nullable=False, default="usuario")
 
-    mensajes_enviados = db.relationship('Mensaje', foreign_keys=[Mensaje.remitente_id], back_populates="remitente")
-    mensajes_recibidos = db.relationship('Mensaje', foreign_keys=[Mensaje.destinatario_id], back_populates="destinatario")
+    mensajes_enviados = db.relationship(
+        'Mensaje',
+        foreign_keys=[Mensaje.remitente_id],
+        back_populates="remitente",
+        cascade="all, delete-orphan"
+    )
+
+    mensajes_recibidos = db.relationship(
+        'Mensaje',
+        foreign_keys=[Mensaje.destinatario_id],
+        back_populates="destinatario",
+        cascade="all, delete-orphan"
+    )
 
     def set_password(self, password):
         """Cifra la contraseña y la almacena como hash."""
@@ -47,7 +58,14 @@ class Post(db.Model):
     fecha_creacion = db.Column(db.DateTime, default=get_utc_now)
     reacciones = db.relationship('Reaction', back_populates='post', cascade="all, delete-orphan")
 
-    user = db.relationship('User', backref=db.backref('posts', lazy=True))
+    user = db.relationship(
+        'User',
+        backref=db.backref(
+            'posts',
+            lazy=True,
+            cascade="all, delete-orphan"
+        )
+    )
 
 # Reacciones a publicaciones
 class Reaction(db.Model):

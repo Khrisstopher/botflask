@@ -72,7 +72,8 @@ def login():
 
     return render_template("login.html")
 
-@bp.route("/logout")
+
+@bp.route("/logout", methods=["POST"])
 def logout():
     session.pop("_flashes", None)
     logout_user()

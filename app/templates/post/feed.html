@@ -24,7 +24,8 @@
             <strong>{{ post.user.username if post.user else "Anónimo" }}</strong>
         </div>
         <p class="post-content">{{ post.contenido }}</p>
-        <small class="text-muted">Publicado el {{ post.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
+        <small class="text-muted">Publicado el {{ post.fecha_creacion | fecha_local }}</small>
+
 
         <!-- Información visual de cada reacción -->
         {% set reacciones = {

@@ -11,6 +11,7 @@
                     <div class="mb-3">
                         <textarea class="form-control" name="contenido" placeholder="¿Qué estás pensando?" rows="4" required></textarea>
                     </div>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Publicar</button>

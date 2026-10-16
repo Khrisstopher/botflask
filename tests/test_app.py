@@ -96,3 +96,31 @@ def test_registro_acepta_contraseña_valida(client, app):
         assert usuario is not None
         assert usuario.username == "usuario_valido"
         assert usuario.check_password("Abcdefg1")
+
+
+
+def test_post_sin_token_csrf_es_rechazado(app):
+    app.config["WTF_CSRF_ENABLED"] = True
+    client = app.test_client()
+
+    # Intentar iniciar sesión sin enviar el token CSRF.
+    client.post(
+        "/login",
+        data={
+            "email": "admin@test.com",
+            "password": "Admin1234",
+        },
+    )
+
+    # Si no inició sesión, debe redirigir al login al acceder al feed.
+    r = client.get("/feed")
+    assert r.status_code == 302
+    assert "/login" in r.headers["Location"]
+
+
+def test_logout_solo_acepta_post(app):
+    client = app.test_client()
+
+    response = client.get("/logout")
+
+    assert response.status_code == 405
