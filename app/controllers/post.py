@@ -27,6 +27,17 @@ def feed():
             return redirect(url_for("posts.feed"))
 
     posts = Post.query.order_by(Post.fecha_creacion.desc()).all()
+
+    # Calcular los conteos de reacciones para cada publicación
+    for post in posts:
+        conteos = {tipo: 0 for tipo in TIPOS_REACCION}
+
+        for reaccion in post.reacciones:
+            if reaccion.tipo in conteos:
+                conteos[reaccion.tipo] += 1
+
+        post.reaction_counts = conteos
+        
     return render_template("post/feed.html", posts=posts)
 
 
