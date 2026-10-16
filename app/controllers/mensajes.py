@@ -94,7 +94,7 @@ def register_socket_events(socketio):
             to=room,
         )
 
-        current_app.logger.info("Mensaje enviado de %s a %s: %s", current_user.id, destinatario_id)
+        current_app.logger.info("Mensaje enviado de %s a %s", current_user.id, destinatario_id)
 
 
 def obtener_chats_usuario(user_id):

@@ -21,30 +21,40 @@
     <div class="post-card">
         <div class="post-header">
             <img src="{{ url_for('static', filename='images/bot.ico') }}" alt="Avatar">
-            <strong>{{ post.autor if post.autor else "Anónimo" }}</strong>
+            <strong>{{ post.user.username if post.user else "Anónimo" }}</strong>
         </div>
         <p class="post-content">{{ post.contenido }}</p>
         <small class="text-muted">Publicado el {{ post.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
 
+        <!-- Información visual de cada reacción -->
+        {% set reacciones = {
+            'like': {'emoji': '👍', 'clase': 'primary'},
+            'love': {'emoji': '❤️', 'clase': 'danger'},
+            'haha': {'emoji': '😂', 'clase': 'warning'},
+            'wow': {'emoji': '😮', 'clase': 'info'},
+            'sad': {'emoji': '😢', 'clase': 'secondary'},
+            'angry': {'emoji': '😡', 'clase': 'danger'}
+        } %}
+
         <!-- Botones de reacción -->
         <div class="reaction-buttons">
-            <button class="btn btn-outline-primary react-btn" data-post="{{ post.id }}" data-type="like">👍</button>
-            <button class="btn btn-outline-danger react-btn" data-post="{{ post.id }}" data-type="love">❤️</button>
-            <button class="btn btn-outline-warning react-btn" data-post="{{ post.id }}" data-type="haha">😂</button>
-            <button class="btn btn-outline-info react-btn" data-post="{{ post.id }}" data-type="wow">😮</button>
-            <button class="btn btn-outline-secondary react-btn" data-post="{{ post.id }}" data-type="sad">😢</button>
-            <button class="btn btn-outline-danger react-btn" data-post="{{ post.id }}" data-type="angry">😡</button>
+            {% for tipo in TIPOS_REACCION %}
+                <button
+                    class="btn btn-outline-{{ reacciones[tipo]['clase'] }} react-btn"
+                    data-post="{{ post.id }}"
+                    data-type="{{ tipo }}">
+                    {{ reacciones[tipo]['emoji'] }}
+                </button>
+            {% endfor %}
         </div>
 
         <!-- Contador de reacciones -->
         <div class="reaction-counts" id="reaction-counts-{{ post.id }}">
-            👍 {{ post.reaction_counts['like'] }}
-            ❤️ {{ post.reaction_counts['love'] }}
-            😂 {{ post.reaction_counts['haha'] }}
-            😮 {{ post.reaction_counts['wow'] }}
-            😢 {{ post.reaction_counts['sad'] }}
-            😡 {{ post.reaction_counts['angry'] }}
+            {% for tipo in TIPOS_REACCION %}
+                {{ reacciones[tipo]['emoji'] }} {{ post.reaction_counts[tipo] }}
+            {% endfor %}
         </div>
+
     </div>
     {% endfor %}
 </div>
