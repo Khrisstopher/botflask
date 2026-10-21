@@ -13,8 +13,8 @@
 
 ## 🎬 Demo
 
-- 🌐 [Probar la app en vivo](https://TU-APP.onrender.com)
-- 📹 [Ver demo en video](https://youtu.be/XXXXXXXXXXX)
+- 🌐 [Probar la app en vivo (aún en desarrollo)]()
+- 📹 [Ver demo en video](https://youtu.be/SoC8UTN9iSE)
 
 > La app está en un plan gratuito de Render: si estuvo inactiva, la primera carga puede tardar un poco.
 
@@ -23,9 +23,9 @@
 ## 📸 Capturas de Pantalla
 | Feed y reacciones | Chat en tiempo real |
 | :---: | :---: |
-| ![Feed](./docs/screenshots/feed.gif) | ![Chat](./docs/screenshots/chat.gif) |
-| ![Panel de usuarios](./docs/screenshots/users.gif) | ![Perfil](./docs/screenshots/profile.png) |
-| ![Registro](./docs/screenshots/register.png) | ![Login](./docs/screenshots/login.png) |
+| ![Feed](/docs/screenshots/feed.png) | ![Chat](/docs/screenshots/chat.png) |
+| ![Panel de usuarios](/docs/screenshots/users.png) | ![Perfil](/docs/screenshots/perfil.png) |
+| ![Registro](/docs/screenshots/register.png) | ![Login](/docs/screenshots/login.png) |
 
 ---
 
