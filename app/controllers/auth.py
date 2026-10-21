@@ -9,28 +9,42 @@ from flask import (
     url_for,
     session,
 )
+
+from sqlalchemy.exc import IntegrityError
+
+from ..utils.validators import (
+    validar_contraseña,
+    validar_datos_usuario,
+    usuario_duplicado,
+)
+
 from flask_login import login_user, logout_user
 
 from ..extensions import db
 from ..models import User
-from ..utils.validators import validar_contraseña
 
 bp = Blueprint("auth", __name__)
+
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
-        email = request.form["email"]
-        password = request.form["password"]
+        username, email, error = validar_datos_usuario(
+            request.form.get("username"),
+            request.form.get("email"),
+        )
 
-        # Verificar si el usuario ya existe
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            flash("El correo ya está registrado.", "danger")
+        # Validar los campos antes de consultar la base de datos.
+        if not error:
+            error = usuario_duplicado(username, email)
+
+        if error:
+            flash(error, "danger")
             return redirect(url_for("auth.register"))
 
-        # Validar la contraseña
+        # Obtener la contraseña de forma segura si falta el campo.
+        password = request.form.get("password", "")
+
         if not validar_contraseña(password):
             flash(
                 "La contraseña debe tener al menos 8 caracteres, "
@@ -39,7 +53,7 @@ def register():
             )
             return redirect(url_for("auth.register"))
 
-        # Crear el nuevo usuario con rol "usuario"
+        # Crear el nuevo usuario.
         new_user = User(
             username=username,
             email=email,
@@ -47,19 +61,29 @@ def register():
         )
         new_user.set_password(password)
 
-        db.session.add(new_user)
-        db.session.commit()
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+
+        except IntegrityError:
+            db.session.rollback()
+            flash(
+                "El usuario o el correo ya existen.",
+                "danger",
+            )
+            return redirect(url_for("auth.register"))
 
         flash("Usuario registrado con éxito.", "success")
         return redirect(url_for("auth.login"))
 
     return render_template("register.html")
 
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password", "")
 
         user = User.query.filter_by(email=email).first()
 

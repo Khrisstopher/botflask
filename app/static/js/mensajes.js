@@ -1,5 +1,11 @@
 const socket = io();
 
+
+socket.on("error_mensaje", function (data) {
+    alert(data.error || "No se pudo enviar el mensaje.");
+});
+
+
 // Evento para enviar mensajes por WebSocket
 const sendMessageButton = document.getElementById("send-message");
 
