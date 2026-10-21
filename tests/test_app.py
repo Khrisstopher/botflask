@@ -225,3 +225,34 @@ def test_chat_rechaza_destinatario_inexistente(client, app):
         assert Mensaje.query.count() == mensajes_antes
 
     ws.disconnect()
+
+
+def test_eliminar_usuario_borra_todo_lo_que_creo(client, app):
+    from app.extensions import db
+    from app.models import User, Post, Reaction, Mensaje
+
+    with app.app_context():
+        otro = User(username="otro", email="otro@test.com")
+        otro.set_password("Abcd1234")
+        db.session.add(otro)
+        db.session.commit()
+        admin = User.query.filter_by(username="admin_test").first()
+        post_admin = Post(user_id=admin.id, contenido="del admin")
+        post_otro = Post(user_id=otro.id, contenido="del otro")
+        db.session.add_all([post_admin, post_otro])
+        db.session.commit()
+        db.session.add_all([
+            Reaction(tipo="like", post_id=post_admin.id, user_id=otro.id),
+            Mensaje(remitente_id=otro.id, destinatario_id=admin.id, contenido="hola"),
+        ])
+        db.session.commit()
+        otro_id = otro.id
+
+    client.post("/login", data={"email": "admin@test.com", "password": "Admin1234"})
+    assert client.post(f"/usuarios/eliminar/{otro_id}").status_code == 200
+
+    with app.app_context():
+        assert db.session.get(User, otro_id) is None
+        assert Post.query.filter_by(user_id=otro_id).count() == 0
+        assert Reaction.query.filter_by(user_id=otro_id).count() == 0
+        assert Mensaje.query.count() == 0
