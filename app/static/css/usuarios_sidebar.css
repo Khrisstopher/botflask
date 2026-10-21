@@ -1,36 +1,43 @@
+
 #usuarios-sidebar {
     position: fixed;
     right: 0;
-    top: 56px; /* Ajusta según la altura de tu navbar */
+    top: 56px;
     width: 250px;
-    height: calc(100% - 56px);
-    background: var(--bs-body-bg); /* Se adapta al fondo oscuro/claro */
-    color: var(--bs-body-color); /* Color del texto automático */
-    border-left: 1px solid var(--bs-border-color); /* Borde adaptable */
+    height: calc(100vh - 56px);
+    box-sizing: border-box;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-left: 1px solid var(--bs-border-color);
     padding: 10px;
     overflow-y: auto;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 #usuarios-sidebar h5 {
     text-align: center;
     margin-bottom: 10px;
-    color: var(--bs-body-color); /* Asegura que el título también cambie */
+    color: var(--bs-body-color);
 }
 
 #lista-usuarios {
     list-style: none;
     padding: 0;
     margin: 0;
+    flex-grow: 1;
 }
 
-#lista-usuarios li {
+#lista-usuarios .list-group-item {
     padding: 8px;
-    border-bottom: 1px solid var(--bs-border-color); /* Borde adaptable */
+    border-bottom: 1px solid var(--bs-border-color);
     cursor: pointer;
     transition: background 0.3s;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
 }
 
-#lista-usuarios li:hover {
-    background: var(--bs-secondary-bg); /* Color de hover sutil compatible con Bootstrap */
+#lista-usuarios .list-group-item:hover {
+    background: var(--bs-secondary-bg);
 }
