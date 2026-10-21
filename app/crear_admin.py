@@ -19,6 +19,7 @@ def crear_admin():
     email = os.getenv("ADMIN_EMAIL") or click.prompt(
         "Correo del administrador",
     )
+    email = email.strip().lower()
 
     password = os.getenv("ADMIN_PASSWORD")
     if not password:

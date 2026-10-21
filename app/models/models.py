@@ -42,6 +42,12 @@ class User(db.Model, UserMixin):
         cascade="all, delete-orphan"
     )
 
+    reacciones = db.relationship(
+        'Reaction',
+        back_populates='user',
+        cascade="all, delete-orphan"
+    )
+
     def set_password(self, password):
         """Cifra la contraseña y la almacena como hash."""
         self.password_hash = generate_password_hash(password)
@@ -74,3 +80,4 @@ class Reaction(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post = db.relationship('Post', back_populates='reacciones')
+    user = db.relationship('User', back_populates='reacciones')

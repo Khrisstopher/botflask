@@ -1,9 +1,17 @@
 import pytest
 
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+
 from app import create_app
 from app.config import TestConfig
 from app.extensions import db
 from app.models import User
+
+
+@event.listens_for(Engine, "connect")
+def _activar_claves_foraneas(dbapi_con, _):
+    dbapi_con.execute("PRAGMA foreign_keys=ON")
 
 @pytest.fixture
 def app():

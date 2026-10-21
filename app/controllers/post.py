@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
 
 from ..extensions import db
@@ -8,26 +8,35 @@ bp = Blueprint("posts", __name__)
 
 TIPOS_REACCION = ["like", "love", "haha", "wow", "sad", "angry"]
 
-
 @bp.route("/feed", methods=["GET", "POST"])
 @login_required
 def feed():
     if request.method == "POST":
-        contenido = request.form.get("contenido")
+        contenido = (request.form.get("contenido") or "").strip()
 
-        if contenido:
-            nuevo_post = Post(
-                contenido=contenido,
-                user_id=current_user.id
-            )
-            db.session.add(nuevo_post)
-            db.session.commit()
-
+        if not contenido:
+            flash("La publicación no puede estar vacía.", "danger")
             return redirect(url_for("posts.feed"))
+
+        if len(contenido) > 1000:
+            flash(
+                "La publicación no puede superar los 1000 caracteres.",
+                "danger"
+            )
+            return redirect(url_for("posts.feed"))
+
+        nuevo_post = Post(
+            contenido=contenido,
+            user_id=current_user.id
+        )
+        db.session.add(nuevo_post)
+        db.session.commit()
+
+        return redirect(url_for("posts.feed"))
 
     posts = Post.query.order_by(Post.fecha_creacion.desc()).all()
 
-    # Calcular los conteos de reacciones para cada publicación
+    # Calcular los conteos de reacciones para cada publicación.
     for post in posts:
         conteos = {tipo: 0 for tipo in TIPOS_REACCION}
 
@@ -36,8 +45,12 @@ def feed():
                 conteos[reaccion.tipo] += 1
 
         post.reaction_counts = conteos
-        
-    return render_template("post/feed.html", posts=posts, TIPOS_REACCION=TIPOS_REACCION)
+
+    return render_template(
+        "post/feed.html",
+        posts=posts,
+        TIPOS_REACCION=TIPOS_REACCION
+    )
 
 
 @bp.route("/reaction/<int:post_id>", methods=["POST"])
