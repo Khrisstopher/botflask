@@ -14,7 +14,13 @@ from flask_login import current_user, login_required, logout_user
 
 from ..extensions import db
 from ..models import User
-from ..utils.validators import validar_contraseña
+from sqlalchemy.exc import IntegrityError
+
+from ..utils.validators import (
+    validar_contraseña,
+    validar_datos_usuario,
+    usuario_duplicado,
+)
 
 bp = Blueprint("users", __name__)
 
@@ -46,11 +52,15 @@ def lista_usuarios():
     return render_template("users.html", usuarios=obtener_usuarios())
 
 
+
 @bp.route("/usuarios/editar/<int:id>", methods=["POST"])
 @login_required
 def editar_usuario(id):
-    """Permite actualizar los datos de un usuario desde AJAX."""
-    usuario = User.query.get_or_404(id)
+    """Actualiza los datos de un usuario desde AJAX."""
+    usuario = db.session.get(User, id)
+
+    if usuario is None:
+        abort(404)
 
     # Solo el propio usuario o un administrador pueden editar.
     if current_user.role != "admin" and current_user.id != usuario.id:
@@ -58,30 +68,35 @@ def editar_usuario(id):
 
     data = request.get_json(silent=True)
 
-    if not data or all(value in [None, ""] for value in data.values()):
+    if not isinstance(data, dict) or not data:
         return jsonify({
-            "error": "No se recibieron datos o están vacíos"
+            "error": "No se recibieron datos válidos."
         }), 400
 
     username = data.get("username")
     email = data.get("email")
     password = data.get("password")
 
-    # Validar si el correo ya está en uso por otro usuario.
-    usuario_existente = User.query.filter(
-        User.email == email,
-        User.id != id,
-    ).first()
+    # Validar y normalizar el nombre de usuario y el correo.
+    username, email, error = validar_datos_usuario(
+        username,
+        email,
+    )
 
-    if usuario_existente:
-        return jsonify({
-            "error": "Este correo ya está en uso por otro usuario"
-        }), 400
+    if error:
+        return jsonify({"error": error}), 400
 
-    usuario.username = username
-    usuario.email = email
+    # Comprobar duplicados excluyendo al propio usuario.
+    error = usuario_duplicado(
+        username,
+        email,
+        excluir_id=usuario.id,
+    )
 
-    # Solo actualizar la contraseña si se ingresó una nueva.
+    if error:
+        return jsonify({"error": error}), 400
+
+    # Validar la contraseña solo si se ha proporcionado una nueva.
     if password:
         if not validar_contraseña(password):
             return jsonify({
@@ -93,7 +108,21 @@ def editar_usuario(id):
 
         usuario.set_password(password)
 
-    db.session.commit()
+    # Guardar los datos normalizados.
+    usuario.username = username
+    usuario.email = email
+
+    try:
+        db.session.commit()
+
+    except IntegrityError:
+        db.session.rollback()
+
+        return jsonify({
+            "error": (
+                "El nombre de usuario o el correo ya están registrados."
+            )
+        }), 400
 
     return jsonify({
         "message": "Usuario actualizado con éxito"
@@ -103,7 +132,10 @@ def editar_usuario(id):
 @bp.route("/usuarios/eliminar/<int:id>", methods=["POST"])
 @login_required
 def eliminar_usuario(id):
-    usuario = User.query.get_or_404(id)
+    usuario = db.session.get(User, id)
+
+    if usuario is None:
+        abort(404)
 
     # Un administrador puede eliminar cualquier usuario.
     if current_user.role == "admin":

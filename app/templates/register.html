@@ -27,6 +27,8 @@
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
 
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                 <!-- Botón para Enviar el Formulario -->
                 <button type="submit" class="btn btn-primary w-100">Registrar</button>
             </form>

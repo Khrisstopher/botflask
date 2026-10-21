@@ -18,8 +18,7 @@ def feed():
         if contenido:
             nuevo_post = Post(
                 contenido=contenido,
-                user_id=current_user.id,
-                autor=current_user.username,
+                user_id=current_user.id
             )
             db.session.add(nuevo_post)
             db.session.commit()
@@ -38,7 +37,7 @@ def feed():
 
         post.reaction_counts = conteos
         
-    return render_template("post/feed.html", posts=posts)
+    return render_template("post/feed.html", posts=posts, TIPOS_REACCION=TIPOS_REACCION)
 
 
 @bp.route("/reaction/<int:post_id>", methods=["POST"])

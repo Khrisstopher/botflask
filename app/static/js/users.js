@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    const csrfToken = $('meta[name="csrf-token"]').attr("content");
+
+    // DataTables: se conserva temporalmente porque depende de jQuery.
     let table = $("#tablaUsuarios").DataTable({
         paging: true,
         autoWidth: true,
@@ -19,68 +22,89 @@ $(document).ready(function () {
         order: [[1, "asc"]]
     });
 
-    // Delegar evento de clic para actualizar usuario
+    // Abrir el modal para editar un usuario.
     $(document).on("click", ".actualizar-btn", function () {
-        let userId = $(this).data("id");
-        let username = $(this).data("username");
-        let email = $(this).data("email");
+        const userId = $(this).data("id");
+        const username = $(this).data("username");
+        const email = $(this).data("email");
 
         $("#editUserId").val(userId);
         $("#editUsername").val(username);
         $("#editEmail").val(email);
-        $("#editPassword").val(""); // Vacío por defecto
+        $("#editPassword").val("");
 
-        $("#modalEditarUsuario").modal("show");
+        const modalElement = document.getElementById("modalEditarUsuario");
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
     });
 
-    // Manejar la actualización de usuario
-    $("#formEditarUsuario").submit(function (event) {
+    // Editar usuario usando fetch.
+    $("#formEditarUsuario").on("submit", async function (event) {
         event.preventDefault();
-        
-        let userId = $("#editUserId").val();
-        let updatedData = {
+
+        const userId = $("#editUserId").val();
+
+        const updatedData = {
             username: $("#editUsername").val(),
             email: $("#editEmail").val(),
             password: $("#editPassword").val() || null
         };
 
-        $.ajax({
-            url: `/usuarios/editar/${userId}`, 
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(updatedData),
-            success: function () {
-                alert("Usuario actualizado correctamente");
-                location.reload(); // Recargar la página para reflejar cambios
-            },
-            error: function (xhr) {
-                let response = xhr.responseJSON; 
-                if (response && response.error) {
-                    alert(response.error); 
-                } else {
-                    alert("Error al actualizar usuario");
-                }
+        try {
+            const response = await fetch(`/usuarios/editar/${userId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error || `Error HTTP: ${response.status}`
+                );
             }
-        });        
+
+            alert(result.message || "Usuario actualizado correctamente");
+            location.reload();
+
+        } catch (error) {
+            alert(error.message || "Error al actualizar usuario");
+        }
     });
 
-    // Delegar evento de clic para eliminar usuario
-    $(document).on("click", ".eliminar-btn", function () {
-        let userId = $(this).data("id");
+    // Eliminar usuario usando fetch.
+    $(document).on("click", ".eliminar-btn", async function () {
+        const userId = $(this).data("id");
 
-        if (confirm("¿Seguro que quieres eliminar este usuario?")) {
-            $.ajax({
-                url: `/usuarios/eliminar/${userId}`, 
-                type: "POST",
-                success: function (response) {
-                    alert(response.message);
-                    location.reload(); // Recargar la página para reflejar cambios
-                },
-                error: function (xhr) {
-                    let errorMessage = xhr.responseJSON ? xhr.responseJSON.error : "Error al eliminar usuario.";
-                    alert(errorMessage);
+        if (!confirm("¿Seguro que quieres eliminar este usuario?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/usuarios/eliminar/${userId}`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error || `Error HTTP: ${response.status}`
+                );
+            }
+
+            alert(result.message || "Usuario eliminado correctamente");
+            location.reload();
+
+        } catch (error) {
+            alert(error.message || "Error al eliminar usuario");
         }
     });
 });

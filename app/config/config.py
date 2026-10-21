@@ -15,6 +15,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS") or None
 
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE") == "1"
+
 
 class TestConfig(Config):
     TESTING = True

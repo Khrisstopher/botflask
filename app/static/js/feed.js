@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
     document.querySelectorAll(".react-btn").forEach(button => {
         button.addEventListener("click", function () {
             const postId = this.getAttribute("data-post");
@@ -7,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(`/reaction/${postId}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
                 },
                 body: JSON.stringify({ tipo })
             })
