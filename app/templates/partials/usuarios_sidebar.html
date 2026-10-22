@@ -1,4 +1,14 @@
-<div id="usuarios-sidebar">
-    <h5>Usuarios conectados</h5>
+<div id="usuarios-sidebar" aria-label="Usuarios conectados">
+    <div class="usuarios-sidebar-header">
+        <h5>Usuarios conectados</h5>
+
+        <button
+            id="cerrar-usuarios-sidebar"
+            type="button"
+            class="btn-close d-lg-none"
+            aria-label="Cerrar usuarios conectados">
+        </button>
+    </div>
+
     <ul id="lista-usuarios" class="list-group"></ul>
 </div>

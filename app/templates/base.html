@@ -35,7 +35,7 @@
     <div id="content">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Metbot</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">BotFlask</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -71,6 +71,17 @@
             </div>
         </nav>
         <main class="container mt-5">
+            {% if current_user.is_authenticated %}
+                <button
+                    id="toggle-usuarios-sidebar"
+                    class="btn btn-outline-secondary d-lg-none mb-3"
+                    type="button"
+                    aria-controls="usuarios-sidebar"
+                    aria-expanded="false">
+                    <i class="fas fa-users" aria-hidden="true"></i>
+                    Usuarios conectados
+                </button>
+            {% endif %}
             <!-- Mostrar los mensajes flash -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
