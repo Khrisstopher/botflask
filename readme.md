@@ -13,10 +13,11 @@
 
 ## 🎬 Demo
 
-- 🌐 [Probar la app en vivo (aún en desarrollo)]()
+- 🌐 [Probar la app en vivo](https://botflask-r9ve.onrender.com)
+
 - 📹 [Ver demo en video](https://youtu.be/SoC8UTN9iSE)
 
-> La app está en un plan gratuito de Render: si estuvo inactiva, la primera carga puede tardar un poco.
+> Nota: Esta aplicación está desplegada en Render con fines demostrativos. Debido a las limitaciones del plan gratuito, la base de datos puede dejar de estar disponible después de su periodo de vigencia. En ese caso, el inicio de sesión, el registro de usuarios y otras funciones que dependen de la base de datos podrían no funcionar correctamente.
 
 ---
 
@@ -79,7 +80,7 @@ Es un proyecto personal de práctica: el objetivo es demostrar un backend comple
 
 ## Pruebas automatizadas
 
-Hay una batería de pruebas con **pytest** que usa una base de datos en memoria y una configuración de pruebas aislada (no toca la base de datos real). Cubre:
+Hay 20 pruebas automatizadas con **pytest** entre unitarias y de integración que usa una base de datos en memoria y una configuración de pruebas aislada (no toca la base de datos real). Cubre:
 
 - Carga de páginas y rutas protegidas
 - Registro y login (casos correctos e incorrectos)
@@ -172,7 +173,7 @@ Abre `http://localhost:5000` en el navegador.
 ## Despliegue en Render
 
 - **Build command:** `pip install -r requirements.txt`
-- **Start command:** `flask --app wsgi db upgrade && gunicorn -w 1 --threads 100 wsgi:app`
+- **Start command:** `flask --app wsgi db upgrade && (flask --app wsgi crear-admin || true) && gunicorn -w 1 --threads 100 wsgi:app`
 - **Base de datos:** PostgreSQL de Render, conectada mediante `DATABASE_URL`
 - **Variables:** `SECRET_KEY`, `DATABASE_URL`, `SESSION_COOKIE_SECURE=1`, `PYTHON_VERSION`
 
